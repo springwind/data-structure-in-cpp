@@ -262,7 +262,7 @@ private:
 		return nullptr;
 	}
 
-	void makeEmpty(BiNode *t)
+	void makeEmpty(BiNode *&t)
 	{
 		if(t)
 		{
