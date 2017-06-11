@@ -22,10 +22,17 @@ void test(int w[], int n)
 	ht.traverse(VisitFun());
 	cout<<endl<<"-----------------"<<endl;
 
-	char ** code = ht.getHuffmanCode();
+	char ** codes = ht.getHuffmanCode();
 	for(int i = 0; i<n; i++)
 	{
-		cout<<setw(2)<<w[i]<<":\t"<<code[i]<<endl;
+		cout<<setw(2)<<w[i]<<":\t"<<codes[i]<<endl;
+	}
+
+	ht.huffmanCoding_root();
+	codes = ht.getHuffmanCode();
+	for(int i = 0; i<n; i++)
+	{
+		cout<<setw(2)<<w[i]<<":\t"<<codes[i]<<endl;
 	}
 
 
