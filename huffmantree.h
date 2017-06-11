@@ -66,6 +66,9 @@ public:
 				code[codeLen] = '\0';
 				_codes[p] = new char[codeLen + 1];
 				strcpy(_codes[p], code);
+
+				codeLen--;
+				p = _ht[p].parent;
 			}
 			else 
 			{
