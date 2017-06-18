@@ -416,7 +416,7 @@ public:
 	{
 		if(NOT_A_VERTEX == paths.start)
 			return ;
-		cout<<"shortest paths from "<<_vertices[paths.start].data<<endl;
+		cout<<endl<<"shortest paths from "<<_vertices[paths.start].data<<endl;
 		for(int i = 0; i<_vexNum; i++)
 		{
 			cout<<"to "<<_vertices[i].data<<":\t";
@@ -434,13 +434,7 @@ public:
 		cout<<endl;
 	}
 
-	//find articulation points
-	void findArt()
-	{
-		findArticul(0); //dfs from v[0]
-	}
-
-	//find articulation points. dfs from v[start]. 
+	//find articulation points of graph's connected component. dfs from v[start]. 
 	void findArticul(const int start)
 	{
 		if(_directed)
@@ -468,13 +462,7 @@ public:
 		printArt();
 	}
 
-	//find articulation points
-	void findArt2()
-	{
-		findArticul2(0);
-	}
-
-	//find articulation points
+	//find articulation points of graph's connected component
 	void findArticul2(const int start)
 	{
 		if(_directed)

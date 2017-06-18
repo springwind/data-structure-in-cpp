@@ -44,6 +44,7 @@ void testGraph(ALGraph<VertexType> &g)
 		g.printShortestPath();
 	}
 	cout<<endl<<endl;
+
 }
 
 void test1()
@@ -77,6 +78,8 @@ void test2()
 	
 	cout<<"G2"<<endl;
 	testGraph(g2);
+
+	
 }
 
 
@@ -105,7 +108,7 @@ void test3()
 	g3.insertArc('L', 'M');
 
 
-	cout<<"G3:"<<endl;
+	cout<<"-----------------G3------------------"<<endl;
 	testGraph(g3);
 }
 
@@ -124,7 +127,7 @@ void test4()
 	g4.insertArc(vs + 5, vs + 8);
 	g4.insertArc(vs + 6, vs + 7);
 
-	cout<<"G4:"<<endl;
+	cout<<"-----------------------------G4-----------------------------"<<endl;
 	testGraph(g4);
 }
 
@@ -161,7 +164,7 @@ void test5()
 	g5.insertArc('J', 'M');
 	g5.insertArc('L', 'M');
 	
-	cout<<"G5:"<<endl;
+	cout<<"--------------------------G5-------------------------"<<endl;
 	testGraph(g5);
 	for(int i = 0; i<n; i++)
 	{
