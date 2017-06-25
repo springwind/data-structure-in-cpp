@@ -259,7 +259,7 @@ public:
 	template<typename VisitFun>
 	bool dfsTraverse(VisitFun vf) 
 	{
-		visited.reset(_vexNum);
+		visited.assign(_vexNum, false);
 
 		for(int v = 0; v < _vexNum; v++)
 			if(!visited[v])
@@ -275,7 +275,7 @@ public:
 	template<typename VisitFun>
 	bool bfsTraverse(VisitFun vf) 
 	{
-		visited.reset(_vexNum);
+		visited.assign(_vexNum, false);
 
 		bool succ = true;
 		for(int u = 0; u < _vexNum; u++)
@@ -470,8 +470,9 @@ public:
 				if(allpairs.D[i][j] < INFINITE)
 				{
 					cout<<allpairs.D[i][j] <<endl<<"\t";
-					const int *path = allpairs.computePath(i, j);
+					allpairs.computePath(i, j);
 
+					const vector<int> & path = allpairs.apath;
 					for(int idx = 0; idx < _vexNum && path[idx] != NOT_A_VERTEX ; idx++)
 						cout<<path[idx]<<"\t";
 					cout<<endl<<"\t";
@@ -573,7 +574,7 @@ public:
 		if(!_directed)
 			return ;
 
-		indegrees.reset(_vexNum, 0);
+		indegrees.assign(_vexNum, 0);
 
 
 		for(int i = 0; i<_vexNum; i++)
@@ -598,7 +599,7 @@ public:
 			return ;
 
 		//compute earliest completion time by topological order
-		eventInfo.ve.reset(_vexNum, 0);
+		eventInfo.ve.assign(_vexNum, 0);
 		for(int i = 0; i< _vexNum; i++)
 		{
 			int v = topInfo.sorted[i];
@@ -613,7 +614,7 @@ public:
 
 		//compute latest completion time by reverse topological order
 
-		eventInfo.vl.reset(_vexNum, eventInfo.ve[_vexNum - 1]);
+		eventInfo.vl.assign(_vexNum, eventInfo.ve[_vexNum - 1]);
 		for(int i = _vexNum -1; i>=0; i--)
 		{
 			int v = topInfo.sorted[i];
@@ -758,79 +759,6 @@ public:
 
 //assistent class
 
-	template<typename ValueType>
-	class Array
-	{
-	public:
-		~Array()
-		{
-			clear();
-		}
-
-		void reset(int n)
-		{
-			if(N != n)
-			{
-				clear();
-				p = new ValueType[n];
-				N = n;
-			}
-			else
-			{
-				ValueType v;
-				for(int i = 0; i<N; i++)
-				{
-					p[i] = v;
-				}
-			}
-		}
-
-		void reset(int n, ValueType val)
-		{
-			if(N != n)
-			{
-				clear();
-				p = new ValueType[n];
-			}
-			for(int i = 0; i<n; i++)
-				p[i] = val;
-			N = n;
-		}
-
-		void clear()
-		{
-			if(p)
-				delete[] p;
-			p = nullptr;
-			N = 0;
-		}
-
-		ValueType & operator[] (int i)
-		{
-			return p[i];
-		}
-
-		const ValueType * retrieve() const
-		{
-			return p;
-		}
-
-		ValueType * retrieve()
-		{
-			return p;
-		}
-
-		int getN()const
-		{
-			return N;
-		}
-
-	private:
-		ValueType *p = nullptr;
-		int N = 0;
-	};
-
-
 
 
 
@@ -846,8 +774,8 @@ public:
 			CostType slack;		//slack time
 		};
 		
-		Array<CostType> ve; //earlist complete time
-		Array<CostType> vl; //latest complete time
+		vector<CostType> ve; //earlist complete time
+		vector<CostType> vl; //latest complete time
 	};
 
 
@@ -951,14 +879,16 @@ public:
 		}
 		
 		//compute the shortest path from v to w
-		const int * computePath(int v, int w)
+		void computePath(int v, int w)
 		{
-			apath.reset(N + 1, NOT_A_VERTEX);//the path is as most N vertices, the last place apath[N] is NOT_A_VERTEX, which means the path ends
-			apath.reset(N + 1, NOT_A_VERTEX);
+			//apath.assign(N + 1, NOT_A_VERTEX);//the path is as most N vertices, the last place apath[N] is NOT_A_VERTEX, which means the path ends
+
+			int vex = NOT_A_VERTEX;
+			apath.assign(N + 1, vex);
 			if( v == w)
 			{
 				apath[0] = v;
-				return apath.retrieve();
+				return;
 			}
 			apath[0] = v;
 			apath[1] = w;
@@ -978,16 +908,14 @@ public:
 				else
 					i++;
 			}
-
-			return apath.retrieve();
 		}
 
 		SquareMatrix<int> P;
 		SquareMatrix<CostType> D;
+		vector<int> apath;
 	
 	private:
 		int N = 0;
-		Array<int> apath;
 	};
 
 
@@ -1011,14 +939,18 @@ public:
 		{
 			counter = 0;
 			foundCycle = false;
-			tops.reset(n, 0);
-			sorted.reset(n, NOT_A_VERTEX);
+			tops.assign(n, 0);
+			//sorted.assign(n, NOT_A_VERTEX);
+			int vex = NOT_A_VERTEX;
+			sorted.assign(n, vex);
 			N = n;
 		}
 				
 		void sortVertices()
 		{
-			sorted.reset(N, NOT_A_VERTEX);
+			//sorted.assign(N, NOT_A_VERTEX);
+			int vex = NOT_A_VERTEX;
+			sorted.assign(N, vex);
 
 			for(int v = 0; v<N; v++)
 			{
@@ -1026,8 +958,8 @@ public:
 				sorted[topNum -1] = v; //top number start with 1
 			}
 		}
-		Array<int> tops; //topological number of vertices
-		Array<int> sorted; //vertices topological sorted
+		vector<int> tops; //topological number of vertices
+		vector<int> sorted; //vertices topological sorted
 
 		int counter = 0; //number of vertices topological sorted
 		bool foundCycle = false; //if not topological sorted, there is a cycle in the graph
@@ -1054,7 +986,7 @@ public:
 		
 		void reset(int s, int n)
 		{
-			vpis.reset(n);
+			vpis.assign(n, VertexPathInfo());
 			this->start = s;
 		}
 
@@ -1063,7 +995,7 @@ public:
 		{
 			CostType min = INFINITE;
 			int v = NOT_A_VERTEX;
-			for(int i = 0; i<vpis.getN(); i++)
+			for(int i = 0; i<vpis.size(); i++)
 			{
 				if(!vpis[i].known)
 				{
@@ -1086,7 +1018,7 @@ public:
 
 		int start= NOT_A_VERTEX;
 	private:
-		Array<VertexPathInfo > vpis;
+		vector<VertexPathInfo > vpis;
 	};
 
 	//used for finding articulation points
@@ -1098,17 +1030,17 @@ public:
 		bool art = false; 	//articulation point or not
 	};
 
-	Array<int> 			indegrees;
-	Array<DfsNumInfo> 	dfses;
+	vector<int> 			indegrees;
+	vector<DfsNumInfo> 	dfses;
 	ShortestPaths 		paths;
 	TopologicalInfo 	topInfo;
-	Array<bool> 		visited;
+	vector<bool> 		visited;
 	AllPairsShortestPath allpairs;
 	EventNodeInfo 		eventInfo;
 
 private:
-	static const CostType INFINITE  = numeric_limits<CostType>::max();
 	static const int NOT_A_VERTEX = -1;
+	static const CostType INFINITE  = numeric_limits<CostType>::max();
 	struct ArcNode
 	{
 		int			adjvex;
