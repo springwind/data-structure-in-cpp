@@ -422,7 +422,7 @@ public:
 	}
 
 
-	void allPairShortestPaths()
+	void allPairsShortestPath()
 	{
 		allpairs.reset(_vexNum);
 		for(int v = 0; v<_vexNum; v++)
@@ -451,7 +451,7 @@ public:
 	}
 
 
-	void printAllPairShortestPaths()
+	void printAllPairsShortestPath()
 	{
 //		return ;
 		//allpairs.reset(_vexNum);
@@ -927,7 +927,7 @@ public:
 		int N = 0;
 	};
 
-	class AllPairShortestPaths
+	class AllPairsShortestPath
 	{
 	public:
 		
@@ -1103,7 +1103,7 @@ public:
 	ShortestPaths 		paths;
 	TopologicalInfo 	topInfo;
 	Array<bool> 		visited;
-	AllPairShortestPaths allpairs;
+	AllPairsShortestPath allpairs;
 	EventNodeInfo 		eventInfo;
 
 private:

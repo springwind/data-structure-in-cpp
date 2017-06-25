@@ -86,8 +86,8 @@ void test7()
 	g7.insertArc(p + 2, p + 0, 3);
 
 	cout<<endl<<"========================G7=========================="<<endl;
-	g7.allPairShortestPaths();
-	g7.printAllPairShortestPaths();
+	g7.allPairsShortestPath();
+	g7.printAllPairsShortestPath();
 }
 
 
@@ -118,8 +118,8 @@ void test9_20()
 	//g9_20.dijkstra(i);
 //	g9_20.printShortestPath();
 
-	g9_20.allPairShortestPaths();
-	g9_20.printAllPairShortestPaths();
+	g9_20.allPairsShortestPath();
+	g9_20.printAllPairsShortestPath();
 }
 
 
