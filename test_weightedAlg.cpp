@@ -181,6 +181,55 @@ void test7_29()
 
 }
 
+void test7_16()
+{
+	cout<<endl<<"==============================G7.16=============================="<<endl;
+	string p[] = {"", "V1", "V2", "V3", "V4", "V5", "V6"};
+	WeightedALGraph<string, int> g(p + 1, 6, false);
+
+	g.insertArc(p + 1, p + 2, 6);
+	g.insertArc(p + 1, p + 3, 1);
+	g.insertArc(p + 1, p + 4, 5);
+	g.insertArc(p + 2, p + 3, 5);
+	g.insertArc(p + 2, p + 5, 3);
+	g.insertArc(p + 3, p + 4, 5);
+	g.insertArc(p + 3, p + 5, 6);
+	g.insertArc(p + 3, p + 6, 4);
+	g.insertArc(p + 4, p + 6, 2);
+	g.insertArc(p + 5, p + 6, 6);
+
+	g.mst_Prim();
+	g.printMST_Prim();
+
+	g.mst_Kruskal();
+	g.printMST_Kruskal();
+}
+
+void test9_48()
+{
+	cout<<endl<<"==================G9.48======================="<<endl;
+	string p[] = {"", "v1", "v2", "v3", "v4", "v5", "v6", "v7"};
+	WeightedALGraph<string, int> g(p + 1, 7, false);
+
+	g.insertArc(p + 1, p + 2, 2);
+	g.insertArc(p + 1, p + 3, 4);
+	g.insertArc(p + 1, p + 4, 1);
+	g.insertArc(p + 2, p + 4, 3);
+	g.insertArc(p + 2, p + 5, 10);
+	g.insertArc(p + 3, p + 6, 5);
+	g.insertArc(p + 4, p + 5, 7);
+	g.insertArc(p + 4, p + 6, 8);
+	g.insertArc(p + 4, p + 7, 4);
+	g.insertArc(p + 5, p + 7, 6);
+	g.insertArc(p + 6, p + 7, 1);
+
+	g.mst_Prim();
+	g.printMST_Prim();
+
+	g.mst_Kruskal();
+	g.printMST_Kruskal();
+}
+
 int main()
 {
 
@@ -191,5 +240,8 @@ int main()
 	test7_30();
 
 	test7_29();
+
+	test7_16();
+	test9_48();
 	return 0;
 }
