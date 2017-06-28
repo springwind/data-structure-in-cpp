@@ -6,7 +6,45 @@
 
 using namespace std;
 
+class DisjSets
+{
+public:
+	explicit DisjSets(int numElements)
+		:s(numElements)
+	{
+		s.assign(numElements, -1);
+	}
 
+	int find(int x) const
+	{
+		if(x < 0 || x >= s.size()) //x illegal
+			return -1;
+
+		if(s[x] < 0)
+			return x;
+		else
+			return find(s[x]);
+	}
+
+	void unionSets(int root1, int root2)
+	{
+		if(s[root1] >=0)
+			root1 = find(root1);
+		if(s[root2] >=0)
+			root2 = find(root2);
+
+		if(s[root2] < s[root1])
+			s[root1] = root2;
+		else
+		{
+			if(s[root2 ] == s[root1])
+				s[root1]--;
+			s[root2] = root1;
+		}
+	}
+private:
+	vector<int> s;
+};
 
 
 template<typename VertexType , typename CostType>
@@ -757,23 +795,177 @@ public:
 		cout<<endl;
 	}
 
+
+	void mst_Prim()
+	{
+		if(_directed)
+			return ; //not implemented
+
+		//assume the graph is connected
+		if(!prim)
+			prim = new Prim(_vexNum);
+		else
+			prim->reset(_vexNum);
+
+		prim->vinfo[0].dist = 0;
+
+		for(; ;)
+		{
+			int v = prim->selectSmallestUnknown();
+			if(NOT_A_VERTEX == v)
+				break;
+
+			prim->vinfo[v].known = true;
+
+			for(ArcNode *p = _vertices[v].firstarc; p; p = p->nextarc)
+			{
+				int w = p->adjvex;
+				if(!prim->vinfo[w].known)
+				{
+					if(p->cost < prim->vinfo[w].dist)
+					{
+						prim->vinfo[w].dist = p->cost;
+						prim->vinfo[w].path = v;
+					}
+				}
+			}
+		}
+	}
+
+
+	void printMST_Prim()
+	{
+		cout<<endl<<"--------------MST: Prim------------------------------"<<endl;
+		decltype(prim->vinfo) & vec = prim->vinfo;
+		CostType total = 0;
+		for(int i = 1; i<vec.size(); i++)
+		{
+			total += vec[i].dist;
+			int j = vec[i].path;
+			cout<<"<"<<_vertices[i].data<<","<<_vertices[j].data<<">\t"<<vec[i].dist<<endl;
+		}
+
+		cout<<"total cost: "<<total;
+	}
+	
+
+
+	void mst_Kruskal()
+	{
+		typedef priority_queue<Edge, vector<Edge>, CmpEdge> mypq_type;
+		mypq_type pq;
+		for(int i = 0 ; i<_vexNum; i++)
+		{
+			for(ArcNode *p = _vertices[i].firstarc; p; p = p->nextarc)
+			{
+				int j = p->adjvex;
+				if(i <= j)
+					pq.push(Edge(i,j, p->cost));
+/*				else
+					pq.push(Edge(j, i, p->cost));*/
+			}
+		}
+
+		DisjSets s(_vexNum);
+		int counter = 0;
+		mstEdges.clear();
+		while(counter < _vexNum - 1)
+		{
+			Edge e = pq.top();
+			pq.pop();
+			int s1 = s.find(e.v);
+			int s2 = s.find(e.w);
+			if(s1 != s2)
+			{
+				counter ++;
+				mstEdges.push_back(e);
+				s.unionSets(s1, s2);
+			}
+		}
+	}
+
+
+	void printMST_Kruskal()
+	{
+		cout<<endl<<"------------------MST: Kruskal----------------------"<<endl;
+		CostType total = 0;
+		for(auto e : mstEdges)
+		{
+			total += e.cost;
+			cout<<"<"<<_vertices[e.v].data<<","<<_vertices[e.w].data<<">\t"<<e.cost<<endl;
+		}
+
+		cout<<"total cost is:\t"<<total<<endl;
+	}
 //assistent class
+	struct Edge
+	{
+		int v;
+		int w;
+		CostType cost;
+
+		Edge(int v, int w, CostType c)
+			:v(v), w(w), cost(c)
+		{}
+
+/*		bool operator< (const Edge & e)const
+		{
+			return cost > e.cost;
+		}*/
+	};
+
+	class CmpEdge
+	{
+	public:
+		bool operator() (const Edge& e1, const Edge& e2) const
+		{
+			return e1.cost > e2.cost;
+		}
+	};
+	class Prim
+	{
+	public:
+
+		struct PrimInfo
+		{
+			CostType dist = INFINITE;
+			int		path = NOT_A_VERTEX;
+			bool 	known = false;
+		};
+		Prim(int n)
+			:vinfo(n)
+		{
+			vinfo.assign(n, PrimInfo());
+		}
 
 
+		void reset(int n)
+		{
+			vinfo.assign(n, PrimInfo());
+		}
+		int selectSmallestUnknown() //scan the array
+		{
+			int v  = NOT_A_VERTEX;
+			CostType min = INFINITE;
+			for(int i = 0; i<vinfo.size(); i++)
+			{
+				
+				if(!vinfo[i].known && vinfo[i].dist < min)
+				{
+					min = vinfo[i].dist; 
+					v= i;
+				}
+			}
 
+			return v;
+		}
+		vector<PrimInfo> vinfo;
+	};
 
 	
 	class EventNodeInfo
 	{
 	public:
-		struct ActivityEdge
-		{
-			int v;
-			int w;
-			CostType duration;	//activity duration 
-			CostType slack;		//slack time
-		};
-		
 		vector<CostType> ve; //earlist complete time
 		vector<CostType> vl; //latest complete time
 	};
@@ -1037,6 +1229,9 @@ public:
 	vector<bool> 		visited;
 	AllPairsShortestPath allpairs;
 	EventNodeInfo 		eventInfo;
+	Prim				*prim = nullptr;
+
+	vector<Edge>		mstEdges ;
 
 private:
 	static const int NOT_A_VERTEX = -1;
@@ -1287,6 +1482,10 @@ private:
 		_vexCap = 0;
 		_vexNum = 0;
 		_vexCapInc = 2;	
+
+		if(prim)
+			delete prim;
 	}
+
 
 };
