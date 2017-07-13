@@ -46,12 +46,8 @@ class ClosestPoints
 {
 public:
 	ClosestPoints(const vector<Point2D> & points)
-		:P(points)//, Q(points)
+		:P(points)
 	{
-		//P(points);
-		sort(P.begin(), P.end(), CmpX());
-		//Q(points);
-//		sort(Q.begin(), Q.end(), CmpY());
 	}
 
 	
@@ -92,8 +88,12 @@ public:
 		_pt1.y = INFINITY;
 		_pt2.x = INFINITY;
 		_pt2.y = INFINITY;
+		
+		sort(P.begin(), P.end(), CmpX());
 
 		vector<Point2D> Q(P);
+		sort(Q.begin(), Q.end(), CmpY());
+
 		closest(P, 0, P.size() - 1, Q);
 		if(_delta < INFINITY)
 		{
@@ -132,8 +132,9 @@ private:
 
 
 	double _delta;
-	
-	double closest(vector<Point2D> P, int left, int right, vector<Point2D> Q)
+
+	//P has already sorted by x, Q has already sorted by y
+	double closest(const vector<Point2D> & P, int left, int right, vector<Point2D> & Q)
 	{
 		if(left >= right) //less than 2 points
 			return INFINITY;
@@ -166,7 +167,7 @@ private:
 		double dR = closest(P, mid, right, QRight);	//P[mid, right] are to the right of the line x = xmid, or on the line
 
 		//to get point that are in the strip, discard points that are not in the strip
-		for(auto itr = Q.begin(); itr != Q.end(); )
+		/*for(auto itr = Q.begin(); itr != Q.end(); )
 		{
 			if(fabs(itr->x - xmid) > _delta)
 				itr = Q.erase(itr);
@@ -174,6 +175,14 @@ private:
 				itr ++;
 		}
 		double dC = closestInStrip(Q);
+		*/
+		vector<Point2D> QCenter;
+		for(auto itr = Q.begin(); itr != Q.end(); itr++)
+		{
+			if(fabs(itr->x - xmid) < _delta)
+				QCenter.push_back(*itr);
+		}
+		double dC = closestInStrip(QCenter);
 	
 		return _delta;
 	}
