@@ -13,13 +13,13 @@ public:
 	BiTree(const BiTree &rhs)
 		:_root(nullptr)
 	{
-		_root = clone(rhs->_root);
+		_root = clone(rhs._root);
 	}
 
 	BiTree(BiTree && rhs)
-		:_root(rhs->_root)
+		:_root(rhs._root)
 	{
-		rhs->_root = nullptr;
+		rhs._root = nullptr;
 	}
 
 	//deep copy
@@ -33,7 +33,7 @@ public:
 	//move
 	BiTree & operator= (BiTree && rhs)
 	{
-		std::swap(_root, rhs->_root);
+		std::swap(_root, rhs._root);
 		return *this;
 	}
 
