@@ -223,6 +223,7 @@ private:
 
 			s.push(p);
 
+			//merge the right paths of both heaps
 			while(nullptr != p1 && nullptr != p2)
 			{
 				if(p1->element < p2->element)
@@ -239,7 +240,6 @@ private:
 				p = p->right;
 				s.push(p);
 			}
-
 		
 			if(nullptr != p1)
 			{
@@ -251,26 +251,24 @@ private:
 			}
 
 
+			//fix the nodes that violate the leftist heap property
 			while(!s.empty())
 			{
 				p = s.top();
 				s.pop();
-				
-				if(p->right)
+
+				if(nullptr == p->left)
 				{
-					if(nullptr == p->left)
+					p->left = p->right;
+					p->right = nullptr;
+				}
+				else
+				{
+					if(p->left->npl < p->right->npl)
 					{
-						p->left = p->right;
-						p->right = nullptr;
+						swapChildren(p);
 					}
-					else
-					{
-						if(p->left->npl < p->right->npl)
-						{
-							swapChildren(p);
-						}
-						p->npl = p->right->npl + 1;
-					}
+					p->npl = p->right->npl + 1;
 				}
 			}			
 		}
