@@ -4,6 +4,9 @@
 #include "dsexceptions.h"
 #include <iostream>
 #include <algorithm>
+#include <stack>
+#include <queue>
+#include <vector>
 
 template<typename Comparable>
 class LeftistHeap
@@ -116,6 +119,31 @@ public:
 		rhs.root = nullptr;
 	}
 
+	void levelOrder(std::vector<Comparable> & v)
+	{
+		LeftistNode * p = root;
+		if(p)
+		{
+			std::queue<LeftistNode *> q;
+			q.push(p);
+			while(!q.empty())
+			{
+				p = q.front();
+				q.pop();
+
+				if(p)
+				{
+					q.push(p->left);
+					q.push(p->right);
+					
+					v.push_back(p->element);
+				}
+				else
+					v.push_back(-1);
+			}
+		}
+	}
+
 private:
 	struct LeftistNode
 	{
@@ -152,6 +180,9 @@ private:
 			return merge1(h2, h1);
 	}
 
+	/*
+	//internal method to merge two roots recursively
+	//
 	//assume h1 and h2 are not empty, and the element of h1's root 
 	//is smaller than that of h2's root
 	LeftistNode * merge1(LeftistNode * h1, LeftistNode * h2)
@@ -170,6 +201,78 @@ private:
 			}
 
 			h1->npl = h1->right->npl + 1; //update npl of h1
+		}
+
+		return h1;
+	}*/
+
+	//internal method to merge two roots.
+	//nonrecursive version.
+	//assume h1 and h2 are not empty, and the element of h1's root 
+	//is smaller than that of h2's root
+	LeftistNode * merge1(LeftistNode * h1, LeftistNode * h2)
+	{
+		if(nullptr == h1->left)
+			h1->left = h2;
+		else
+		{
+			std::stack<LeftistNode *> s;
+			LeftistNode * p = h1;
+			LeftistNode * p1 = h1->right;
+			LeftistNode * p2 = h2;
+
+			s.push(p);
+
+			while(nullptr != p1 && nullptr != p2)
+			{
+				if(p1->element < p2->element)
+				{
+					p->right = p1;
+					p1 = p1->right;
+				}
+				else
+				{
+					p->right = p2;
+					p2 = p2->right;
+				}
+
+				p = p->right;
+				s.push(p);
+			}
+
+		
+			if(nullptr != p1)
+			{
+				p->right = p1;
+			}
+			else if(nullptr != p2)
+			{
+				p->right = p2;
+			}
+
+
+			while(!s.empty())
+			{
+				p = s.top();
+				s.pop();
+				
+				if(p->right)
+				{
+					if(nullptr == p->left)
+					{
+						p->left = p->right;
+						p->right = nullptr;
+					}
+					else
+					{
+						if(p->left->npl < p->right->npl)
+						{
+							swapChildren(p);
+						}
+						p->npl = p->right->npl + 1;
+					}
+				}
+			}			
 		}
 
 		return h1;
@@ -195,6 +298,7 @@ private:
 	}
 */
 
+	
 	void reclaimMemory(LeftistNode *t)
 	{
 		if(nullptr != t)
