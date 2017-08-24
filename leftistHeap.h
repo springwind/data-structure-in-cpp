@@ -241,14 +241,7 @@ private:
 				s.push(p);
 			}
 		
-			if(nullptr != p1)
-			{
-				p->right = p1;
-			}
-			else if(nullptr != p2)
-			{
-				p->right = p2;
-			}
+			p->right = nullptr != p1? p1 : p2;
 
 
 			//fix the nodes that violate the leftist heap property
