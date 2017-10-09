@@ -77,9 +77,14 @@ public:
 	}
 
 
+	
+
 	typedef PairNode * Position;
 
-	Position insert(const Comparable & x)
+
+
+
+	const Position insert(const Comparable & x)
 	{
 		PairNode * p = new PairNode(x, nullNode, nullNode, nullNode);
 
@@ -90,7 +95,7 @@ public:
 		return p;
 	}
 
-	Position insert(Comparable && x)
+	const Position insert(Comparable && x)
 	{
 		PairNode *p = new PairNode(x, nullNode, nullNode, nullNode);
 
@@ -100,6 +105,11 @@ public:
 			compareAndLink(root, p);
 
 		return p;
+	}
+	
+	const Comparable & retrieve(const Position p) const
+	{
+		return p->element;
 	}
 
 	void deleteMin()
@@ -133,7 +143,7 @@ public:
 		root = nullNode;
 	}
 
-	void decreaseKey(Position p, const Comparable newVal)
+	void decreaseKey(Position p, const Comparable & newVal)
 	{
 		if(p->element < newVal)
 			throw IllegalArgumentException();
