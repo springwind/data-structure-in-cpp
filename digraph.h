@@ -1,5 +1,5 @@
-#ifndef	DIRECTED_GRAPH 
-#define DIRECTED_GRAPH
+#ifndef	DIGRAPH_H 
+#define DIGRAPH_H
 
 #include <vector>
 #include <forward_list>
