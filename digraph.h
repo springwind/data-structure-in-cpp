@@ -111,22 +111,27 @@ public:
 
 	void printStrongComponents()
 	{
-		cout<<"strong components of the graph:"<<endl;
-		for(int i = 0; i<strong.size(); i++)
+		cout<<"strong components of the graph: "<<endl;
+		
+		map<int, vector<int> > m;
+		for(int v = 0; v<scc.size(); v++)
 		{
-			int v = strong[i];
-			if(NOT_A_VERTEX == v)
-			{
-				cout<<endl;
+			int id = scc[v];
+			m[id].push_back(v);
+		}
 
-			}
-			else
+		for(auto p : m)
+		{
+			cout<<endl;
+			for(int v: p.second)
 			{
 				cout<<vexArr[v].element<<" ";
 			}
 		}
+
 		cout<<endl;
 	}
+
 
 
 
@@ -148,13 +153,15 @@ private:
 	vector<Vertex> vexArr;
 	map<VertexType, int> vexMap;
 	
+	//strongly connected components
+	vector<int> scc;
+	int sccid;
 
 	//assist
 	vector<Vertex> vexRArr; //reverse agencency list
 
-	vector<bool> visited;
-	vector<int> strong;
-	vector<int> finished;
+	vector<bool> visited; //visited[v] tells whether vertex v is visited or not
+	vector<int> finished; //finished[v] tells the postorder traversal number
 
 	void dfs_postTraverse()
 	{
@@ -168,24 +175,23 @@ private:
 		}
 	}
 
-	/*
-	 *
-	 * */
 	void dfs_reverseTraverse()
 	{
 		visited.assign(vexArr.size(), false);
-		strong.clear();
+		scc.assign(vexArr.size(), -1);
+		sccid = 0;
 
-		for(int i = vexArr.size() - 1; i>=0; i--)
+		for(int i = finished.size() - 1; i>=0; i--)
 		{
 			int v = finished[i];
 			if(!visited[v])
 			{
-				strong.push_back(NOT_A_VERTEX);
 				dfs_reverse(v);
+				sccid ++;
 			}
 		}
 	}
+
 
 	/*create reverse graph(reverse all edges)
 	 *
@@ -228,7 +234,7 @@ private:
 	void dfs_reverse(int v)
 	{
 		visited[v] = true;
-		strong.push_back(v);
+		scc[v] = sccid;
 
 		for(int w: vexRArr[v].adj)
 		{
