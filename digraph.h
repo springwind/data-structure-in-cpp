@@ -109,24 +109,52 @@ public:
 		dfs_reverseTraverse();
 	}
 
+
+	void findStrongComponents2()
+	{
+		scc.assign(vexArr.size(), -1);
+		sccid = 0;
+		visited.assign(vexArr.size(), false);
+		
+		dfsNum.assign(vexArr.size(), -1);
+		low.assign(vexArr.size(), -1);
+		count = 0;
+		desc.clear();
+
+		for(int v = 0; v<vexArr.size(); v++)
+		{
+			if(!visited[v])
+			{
+				dfs(v);
+			}
+		}
+
+	}
+
+
 	void printStrongComponents()
 	{
-		cout<<"strong components of the graph:"<<endl;
-		for(int i = 0; i<strong.size(); i++)
+		cout<<"strong components of the graph: "<<endl;
+		
+		map<int, vector<int> > m;
+		for(int v = 0; v<scc.size(); v++)
 		{
-			int v = strong[i];
-			if(NOT_A_VERTEX == v)
-			{
-				cout<<endl;
+			int id = scc[v];
+			m[id].push_back(v);
+		}
 
-			}
-			else
+		for(auto p : m)
+		{
+			cout<<endl;
+			for(int v: p.second)
 			{
 				cout<<vexArr[v].element<<" ";
 			}
 		}
+
 		cout<<endl;
 	}
+
 
 
 
@@ -148,13 +176,60 @@ private:
 	vector<Vertex> vexArr;
 	map<VertexType, int> vexMap;
 	
+	//strongly connected components
+	vector<int> scc;
+	int sccid;
 
 	//assist
 	vector<Vertex> vexRArr; //reverse agencency list
 
-	vector<bool> visited;
-	vector<int> strong;
-	vector<int> finished;
+	vector<bool> visited; //visited[v] tells whether vertex v is visited or not
+	vector<int> finished; //finished[v] tells the postorder traversal number
+
+	
+	vector<int> desc; //the path of the dfs tree: from root to current node
+	vector<int> dfsNum; //the dfs number array of all vertices
+	vector<int> low;	//if w == low[v], w = min{u|<v, u> is back edge }
+	int count;
+
+	void dfs(int v)
+	{
+		visited[v] = true;
+		low[v] = dfsNum[v] = ++count;
+
+		desc.push_back(v);
+		int pos = desc.size() - 1;
+
+		for(int w: vexArr[v].adj)
+		{
+			if(!visited[w])
+			{
+				dfs(w);
+
+				if(low[w] < low[v])
+					low[v] = low[w];
+			}
+			else
+			{
+				if(NOT_A_VERTEX == scc[w])
+				{
+					low[v] = dfsNum[w];
+				}
+			}
+		}
+
+		if(low[v] == dfsNum[v])
+		{
+			for(int i = pos; i<desc.size(); i++)
+			{
+				int v = desc[i];
+				scc[v] = sccid;
+			}
+			desc.erase(desc.begin() + pos, desc.end());
+			sccid ++;
+		}
+	
+	}
 
 	void dfs_postTraverse()
 	{
@@ -168,24 +243,23 @@ private:
 		}
 	}
 
-	/*
-	 *
-	 * */
 	void dfs_reverseTraverse()
 	{
 		visited.assign(vexArr.size(), false);
-		strong.clear();
+		scc.assign(vexArr.size(), -1);
+		sccid = 0;
 
-		for(int i = vexArr.size() - 1; i>=0; i--)
+		for(int i = finished.size() - 1; i>=0; i--)
 		{
 			int v = finished[i];
 			if(!visited[v])
 			{
-				strong.push_back(NOT_A_VERTEX);
 				dfs_reverse(v);
+				sccid ++;
 			}
 		}
 	}
+
 
 	/*create reverse graph(reverse all edges)
 	 *
@@ -228,7 +302,7 @@ private:
 	void dfs_reverse(int v)
 	{
 		visited[v] = true;
-		strong.push_back(v);
+		scc[v] = sccid;
 
 		for(int w: vexRArr[v].adj)
 		{

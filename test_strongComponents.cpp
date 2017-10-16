@@ -5,7 +5,7 @@ using namespace std;
 
 int main()
 {
-	vector<char> v{'A', 'B', 'C','D', 'E', 'F', 'I', 'G', 'H', 'I', 'J'};
+	vector<char> v{'A', 'B', 'C','D', 'E', 'F', 'G', 'H', 'I', 'J'};
 	Digraph<char> g;
 
 	for(char c : v)
@@ -29,5 +29,8 @@ int main()
 	
 	g.printGraph();
 	g.findStrongComponents();
+	g.printStrongComponents();
+
+	g.findStrongComponents2();
 	g.printStrongComponents();
 }
