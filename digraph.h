@@ -109,6 +109,29 @@ public:
 		dfs_reverseTraverse();
 	}
 
+
+	void findStrongComponents2()
+	{
+		scc.assign(vexArr.size(), -1);
+		sccid = 0;
+		visited.assign(vexArr.size(), false);
+		
+		dfsNum.assign(vexArr.size(), -1);
+		low.assign(vexArr.size(), -1);
+		count = 0;
+		desc.clear();
+
+		for(int v = 0; v<vexArr.size(); v++)
+		{
+			if(!visited[v])
+			{
+				dfs(v);
+			}
+		}
+
+	}
+
+
 	void printStrongComponents()
 	{
 		cout<<"strong components of the graph: "<<endl;
@@ -162,6 +185,51 @@ private:
 
 	vector<bool> visited; //visited[v] tells whether vertex v is visited or not
 	vector<int> finished; //finished[v] tells the postorder traversal number
+
+	
+	vector<int> desc; //the path of the dfs tree: from root to current node
+	vector<int> dfsNum; //the dfs number array of all vertices
+	vector<int> low;	//if w == low[v], w = min{u|<v, u> is back edge }
+	int count;
+
+	void dfs(int v)
+	{
+		visited[v] = true;
+		low[v] = dfsNum[v] = ++count;
+
+		desc.push_back(v);
+		int pos = desc.size() - 1;
+
+		for(int w: vexArr[v].adj)
+		{
+			if(!visited[w])
+			{
+				dfs(w);
+
+				if(low[w] < low[v])
+					low[v] = low[w];
+			}
+			else
+			{
+				if(NOT_A_VERTEX == scc[w])
+				{
+					low[v] = dfsNum[w];
+				}
+			}
+		}
+
+		if(low[v] == dfsNum[v])
+		{
+			for(int i = pos; i<desc.size(); i++)
+			{
+				int v = desc[i];
+				scc[v] = sccid;
+			}
+			desc.erase(desc.begin() + pos, desc.end());
+			sccid ++;
+		}
+	
+	}
 
 	void dfs_postTraverse()
 	{
